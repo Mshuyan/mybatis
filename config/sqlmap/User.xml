@@ -3,5 +3,48 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+<!-- 通过命令空间对sql进行分类管理 -->
 <mapper namespace="test">
-        </mapper>
+    <!--
+        id：这是statementID，根据该id决定执行哪条sql
+        parameterType：输入参数类型，需要与创建表时字段类型对应
+        resultType：输出结果的 *** 单条 *** 记录，所映射的java对象类型（即使输出结果是List集合，这里也指定单个对象的类型，而不是list集合的类型）
+    -->
+    <select id="findUserById" parameterType="int" resultType="com.shuyan.po.User">
+        <!--
+            #{id}：占位符，id是参数名称，如果该参数是简单类型，参数名称随便起
+        -->
+        select * from user where id = #{id}
+    </select>
+
+    <!--
+        resultType：虽然这里返回的是list集合，但是该参数仍指定为单条记录的类型
+        '%${value}%'：拼接符号，比如输入参数为：小明，则'%${value}%'被替换为：%小明%
+                      但是这种方式会引起sql注入问题，不建议使用
+                      使用这种方式时，参数名称只能是value
+    -->
+    <select id="findUserByUsernameLike" parameterType="java.lang.String" resultType="com.shuyan.po.User">
+        select * from user where username like '%${value}%'
+    </select>
+    
+    <!--
+        parameterType：因为insert需要多个输入参数，所以输入类型是POJO类，使用#{}就可以取出这个POJO类对象中对应的属性值
+        主键id是自增的，所以不需要在insert语句中指定，指定了也不会使用设置的值作为主键
+    -->
+    <insert id="insertUser" parameterType="com.shuyan.po.User">
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+    </insert>
+
+    <insert id="insertUserAndGetId" parameterType="com.shuyan.po.User">
+        <!--
+            因为主键id是自增的，所以插入后默认无法获得刚插入记录的主键，所以需要下面代码获取刚插入记录的主键
+            keyProperty：获得的主键设置到 parameterType 指定的传入参数的哪个属性中
+            order：SELECT LAST_INSERT_ID()在insert执行前执行，还是在insert执行后执行
+            resultType：返回结果的类型，这里返回的是主键id，所以是Integer
+        -->
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+    </insert>
+</mapper>
