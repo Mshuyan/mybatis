@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shuyan.demo4_dynamicSql.UserMapper">
+    <select id="findUserByCondition0" parameterType="com.shuyan.po.User" resultType="com.shuyan.po.User">
+        select * from user where username = #{username} and sex = #{sex}
+    </select>
+    
+    <!-- if判断：
+        上述查询方法不够灵活，当username为空时，应该自动去掉username的判断条件，可以通过动态sql实现
+        <if/>：当满足test条件时，才将标签体内的字符串拼接到sql中（必须有and）
+        <where/>：相当于sql中的where，但是where标签会自动去掉该去掉的and、or、，等
+    -->
+    <select id="findUserByCondition1" parameterType="com.shuyan.po.User" resultType="com.shuyan.po.User">
+        select * from user
+        <where>
+            <if test="username != null">
+                and username = #{username}
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+        </where>
+    </select>
+
+    <!-- sql片段
+        sql片段需要先定义再使用
+    -->
+    <!-- 定义 -->
+    <sql id="findUserByCondition_where">
+        <if test="username != null">
+            or username = #{username}
+        </if>
+        <if test="sex != null">
+            or sex = #{sex}
+        </if>
+    </sql>
+    <!-- 使用sql片段 -->
+    <select id="findUserByCondition2" parameterType="com.shuyan.po.User" resultType="com.shuyan.po.User">
+        select * from user
+        <where>
+            <include refid="findUserByCondition_where"></include>
+        </where>
+    </select>
+    
+    <!-- foreach
+        当输入是list集合时，需要使用foreach标签遍历
+        要查询的语句：select * from user where sex = #{sex} and (id = #ids[0] or id = #{ids[1] or ...)
+        属性：
+            collection:输入对象中要遍历的集合属性(ids)
+            item：集合中取出的1个元素的对象名称，随意起名，下面用到时对应上即可
+            open：开始遍历时拼接的字符串，一般就是"("或没有
+            close：结束遍历时拼接的字符串，一般就是")"或没有
+            separator：遍历的两个对象中需要拼接的字符串，and、or等
+    -->
+    <select id="findUserByCondition3" parameterType="com.shuyan.po.UserCustom" resultType="com.shuyan.po.User">
+        select * from user
+        <where>
+            <if test="user.sex != null">
+                and sex = #{user.sex}
+            </if>
+            <if test="ids != null">
+                and
+                <foreach collection="ids" item="id" open="(" close=")" separator="or">
+                  id = #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findUserByCondition4" parameterType="com.shuyan.po.UserCustom" resultType="com.shuyan.po.User">
+        select * from user
+        <where>
+            <if test="user.sex != null">
+                and sex = #{user.sex}
+            </if>
+            <if test="ids != null">
+                and id in
+                <foreach collection="ids" item="id" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+</mapper>

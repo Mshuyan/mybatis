@@ -47,4 +47,16 @@
         </selectKey>
         insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
     </insert>
+
+    <delete id="deleteUserById" parameterType="java.lang.Integer">
+        delete from user where id=#{id}
+    </delete>
+
+    <!--
+        根据id修改用户信息需要用户id和新的用户信息，这些东西可以放在1个User对象中，所以parameterType="com.shuyan.po.User"即可
+        但是传入的user对象中的id属性必须设置为要修改的用户的id
+    -->
+    <update id="updateUserById" parameterType="com.shuyan.po.User">
+        update user set username=#{username},birthday=#{birthday},sex=#{sex},address=#{address} where id=#{id}
+    </update>
 </mapper>

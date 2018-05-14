@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.shuyan.demo2_mapperDao.UserMapper">
+    <select id="findUserById" parameterType="int" resultType="com.shuyan.po.User">
+        select * from user where id = #{id}
+    </select>
+
+    <insert id="insertUserAndGetId" parameterType="com.shuyan.po.User">
+        <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Integer">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into user(username,birthday,sex,address) value(#{username},#{birthday},#{sex},#{address})
+    </insert>
+
+    <!--
+        使用resultMap设置输出类型
+        步骤：
+            1.定义resultType映射关系
+            2.设置resultType
+    -->
+    <!--
+        定义resultType映射关系
+        id:当前resultMap的标识
+        type：用映射的POJO类的类型
+    -->
+    <resultMap id="userResultMap" type="com.shuyan.po.User">
+        <!--
+            查询结果集中，如果存在唯一标识列，则该列使用id标签进行映射
+            column：结果集中的列名
+            property：POJO类中的属性名
+        -->
+        <id column="id_" property="id"/>
+        <!--
+            查询结果集中，除唯一标识列以外的列，使用result标签进行映射
+            column：结果集中的列名
+            property：POJO类中的属性名
+        -->
+        <result column="name_" property="username"/>
+    </resultMap>
+    <!--
+        使用上面定义的resultType映射关系
+    -->
+    <select id="findUserByIdResultMap" parameterType="int" resultMap="userResultMap">
+        select id id_,username name_ from user where id = #{id}
+    </select>
+</mapper>

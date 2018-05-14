@@ -85,4 +85,36 @@ public class UserTest {
         System.out.println(user);
         sqlSession.close();
     }
+
+    @Test
+    public void deleteUserById() throws IOException {
+        InputStream inputStream = Resources.getResourceAsStream("SqlMapConfig.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        /*
+         * delete：删除数据
+         * 删除user表中id为29的记录
+         */
+        sqlSession.delete("test.deleteUserById", 29);
+        //对数据库有更改的操作需要提交事务
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    @Test
+    public void updateUserById() throws IOException {
+        InputStream inputStream = Resources.getResourceAsStream("SqlMapConfig.xml");
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+        User user = new User("小蓝",new Date(),"男","回龙观");
+        //根据id修改数据时，传入的对象必须设置要修改的记录的id
+        user.setId(28);
+        /*
+         * update：修改数据
+         */
+        sqlSession.update("test.updateUserById", user);
+        //对数据库有更改的操作需要提交事务
+        sqlSession.commit();
+        sqlSession.close();
+    }
 }

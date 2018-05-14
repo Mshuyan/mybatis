@@ -3,6 +3,22 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    
+    <!-- 加载properties配置文件 -->
+    <properties resource="db.properties"></properties>
+    
+    <!-- 别名定义 -->
+    <typeAliases>
+        <!-- 单个别名定义 -->
+        <typeAlias type="com.shuyan.po.User" alias="user"/>
+
+        <!--
+            批量别名定义
+            这个包下的PO类会被自动定义别名，别名就是类名，首字母大小写均能找到这个PO类
+        -->
+        <package name="com.shuyan.po"/>
+    </typeAliases>
+    
     <!-- 和spring整合后 environments配置将废除-->
     <environments default="development">
         <environment id="development">
@@ -10,10 +26,10 @@
             <transactionManager type="JDBC"/>
             <!-- 数据库连接池，由mybatis管理-->
             <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/test1?characterEncoding=utf-8"/>
-                <property name="username" value="root"/>
-                <property name="password" value="root"/>
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
             </dataSource>
         </environment>
     </environments>
@@ -21,6 +37,19 @@
     <!-- 加载映射文件 -->
     <mappers>
         <mapper resource="sqlmap/User.xml"/>
+
+        <!-- 加载mapper代理方式的映射文件 -->
+        <mapper resource="mapper/UserMapper.xml"/>
+
+        <!-- 通过mapper接口加载单个映射文件
+        <mapper class="com.shuyan.demo3_mappersLoadrsLoad.UserMapper"/>
+        -->
+
+        <!-- 批量加载映射文件 -->
+        <package name="com.shuyan.demo3_mappersLoad"/>
+        <package name="com.shuyan.demo4_dynamicSql"/>
+
     </mappers>
+    
 </configuration>
 
