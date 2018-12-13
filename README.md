@@ -1,6 +1,22 @@
 # mybatis
 
-> 根目录下的[mybatis01](mybatis01)是第1次学习mybatis时的项目，可以作为参考，本次重新学习一下mybatis
+## [mybatis-native](./mybatis-native)
+
+> 原生mybatis的学习
+
+## [springboot-mybatis](./springboot-mybatis)
+
+> springboot中使用mybatis
+
+### 双数据源
+
+> springboot中使用mybatis配置双数据源
 >
-> 第2次学习参见[mybatis02](mybatis02)
+> demo参见另[bidding-bigdata-load](https://github.com/Mshuyan/bidding-bigdata-load) 
+
+## [mybatis-generator](./mybatis-generator)
+
+> 使用插件自动根据数据库字段生成实体类、接口、xml文件
+
+
 
