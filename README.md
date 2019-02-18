@@ -1,18 +1,22 @@
 # mybatis
 
-## [mybatis-native](./mybatis-native)
+## 原生mybatis
 
-> 原生mybatis的学习
+> 参见[mybatis-native](./mybatis-native)
 
-## [springboot-mybatis](./springboot-mybatis)
+## 整合springboot+mybatis
 
-> springboot中使用mybatis
+> 参见[springboot-mybatis](./springboot-mybatis) 
 
 ### 双数据源
 
 > springboot中使用mybatis配置双数据源
 >
-> demo参见另[bidding-bigdata-load](https://github.com/Mshuyan/bidding-bigdata-load) 
+> demo参见[bidding-bigdata-load](https://github.com/Mshuyan/bidding-bigdata-load) 
+
+### redis缓存
+
+> 使用redis作为mybatis的二级缓存，参见[mybatis-redis](./mybatis-redis) 
 
 ## [mybatis-generator](./mybatis-generator)
 
