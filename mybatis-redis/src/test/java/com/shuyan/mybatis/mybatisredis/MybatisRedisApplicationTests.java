@@ -2,6 +2,7 @@ package com.shuyan.mybatis.mybatisredis;
 
 import com.shuyan.mybatis.mybatisredis.business.bean.RegionEntity;
 import com.shuyan.mybatis.mybatisredis.business.mapper.RegionMapper;
+import lombok.Synchronized;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
