@@ -6,7 +6,7 @@
 
 ## 整合springboot+mybatis
 
-> 参见[springboot-mybatis](./springboot-mybatis) 
+> 参见[springboot-mybatis](./springboot-mybatis/README.md) 
 
 ### 双数据源
 
