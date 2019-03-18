@@ -33,6 +33,8 @@
     mybatis.configuration.map-underscore-to-camel-case=true
     # 使用jdbc的getGeneratedKeys自动获取主键主键策略
     mybatis.configuration.use-generated-keys=true
+    # 打印执行的sql；其中 com.rjs.industry.map 是自己项目的包路径
+    logging.level.com.rjs.industry.map=debug
     
     # 指定数据源
     spring.datasource.driverClassName = com.mysql.cj.jdbc.Driver
@@ -163,3 +165,12 @@
   `@MapperScan`用于将指定的包路径下的类都注册为mapper接口类，被spring管理起来，这样就不用每个接口类上都加`@Mapper`注解了
 
 + 接口类上不需要使用`@Repository`注解，spring不是靠该注解管理这些接口类的
+
+### 日志中打印sql
+
++ application.properties
+
+  ```properties
+  # 打印执行的sql；其中 com.rjs.industry.map 是自己项目的包路径
+  logging.level.com.rjs.industry.map=debug
+  ```
