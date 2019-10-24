@@ -174,3 +174,82 @@
   # 打印执行的sql；其中 com.rjs.industry.map 是自己项目的包路径
   logging.level.com.rjs.industry.map=debug
   ```
+
+## 采坑记录
+
+### 分页查询中使用`collection`标签
+
+> 参见：[mybatis-plus中collection一对多关联查询分页出错问题总结](https://blog.csdn.net/qq_38157516/article/details/85563280) 
+
+例：
+
+```xml
+<resultMap id="pageQueryResultMap" type="com.hy.erp.resource.model.dto.HySysUserMatchDto">
+  <id column="match_code" property="matchCode"/>
+  <result column="update_time" property="updateTime"/>
+  <collection property="users" column="match_code" select="pageQueryUser"/>
+</resultMap>
+
+<select id="pageQuery" resultMap="pageQueryResultMap">
+  select distinct
+  m.match_code,
+  m.update_time
+  from hy_sys_user_match as m
+  <if test="query.userId != null or query.username != null or (query.roleIds != null and query.roleIds.size() > 0)">
+    inner join (select match_code
+    from hy_sys_user_match as tmp_m
+    left join hy_sys_user as tmp_u on tmp_m.user_id = tmp_u.user_id
+    left join hy_sys_user_role as tmp_sur on tmp_sur.user_id = tmp_m.user_id
+    <trim prefix="WHERE" prefixOverrides="AND | OR">
+      <if test="query.userId != null">
+        and tmp_u.user_id = #{query.userId}
+      </if>
+      <if test="query.username != null">
+        and tmp_u.username LIKE CONCAT('%',#{query.username},'%')
+      </if>
+      <if test="query.roleIds != null and query.roleIds.size() > 0">
+        and tmp_sur.role_id in
+        <foreach collection="query.roleIds" item="roleId" open="(" close=")" separator=",">
+          #{roleId}
+        </foreach>
+      </if>
+    </trim>
+    ) as tmp
+  </if>
+  <trim prefix="WHERE" prefixOverrides="AND | OR">
+    <if test="query.userId != null or query.username != null or (query.roleIds != null and query.roleIds.size() > 0)">
+      and m.match_code = tmp.match_code
+    </if>
+  </trim>
+  order by m.update_time desc
+</select>
+<select id="pageQueryUser" resultMap="com.hy.erp.user.mapper.HySysUserMapper.userVOResultMap">
+  select
+  u.user_id,
+  u.username,
+  u.chname,
+  u.password,
+  u.mobile,
+  u.create_time,
+  u.update_time,
+  ct.code as delFlagValue,
+  sr.role_id,
+  sr.role_name,
+  sr.role_code,
+  sr.create_time as rcreate_time,
+  sr.update_time as rupdate_time
+  from hy_sys_user_match as m
+  left join hy_sys_user as u on m.user_id = u.user_id
+  left join hy_sys_user_role as sur on sur.user_id = u.user_id
+  left join hy_sys_role as sr on sr.role_id = sur.role_id
+  LEFT JOIN hy_sys_dict t ON u.del_flag_code = t.code
+  LEFT JOIN hy_sys_dict ct ON t.dic_id = ct.parent_id AND u.del_flag_value = ct.`code`
+  where m.match_code = #{matchCode}
+</select>
+```
+
+### 多module中使用mybatis
+
+当多个模块使用时，`mybatis.mapper-locations`需要指定为`classpath*:mapper/*.xml`
+
+注意`classpath`后面的`*`，否则只能扫描到1个module下的`xml`文件
